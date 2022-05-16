@@ -34,8 +34,8 @@ def image_loader(image_name):
 
 
 # Loading of images
-image_directory = "images/"
-style_img = image_loader(image_directory + "love_1.JPG")
+image_directory = "data_pic1/"
+style_img = image_loader(image_directory + "picasso.jpg")
 content_img = image_loader(image_directory + "dancing.jpg")
 
 assert style_img.size() == content_img.size(), "we need to import style and content images of the same size"
@@ -104,7 +104,7 @@ class StyleLoss(nn.Module):
         self.loss = F.mse_loss(G, self.target)
         return input
 
-# Importing the VGG 19 model like in the paper (here we set it to evaluation mode)
+# Importing the VGG 19 model like in the paper (heimagesre we set it to evaluation mode)
 cnn = models.vgg19(pretrained=True).features.to(device).eval()
 
 # VGG network are normalized with special values for the mean and std
@@ -258,7 +258,7 @@ def run_style_transfer(cnn, normalization_mean, normalization_std,
     return input_img
 
 output = run_style_transfer(cnn, cnn_normalization_mean, cnn_normalization_std,
-                            content_img, style_img, input_img, num_steps=3000)
+                            content_img, style_img, input_img, num_steps=300)
 
 plt.figure()
 imshow(output, title='Output Image')
