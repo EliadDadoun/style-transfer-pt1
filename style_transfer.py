@@ -36,8 +36,9 @@ def image_loader(image_name):
 
 # Loading of images
 image_directory = "data_pic1/"
-style_img = image_loader(image_directory + "picasso.jpg")
-content_img = image_loader(image_directory + "starry_night.jpg")
+style_img = image_loader(image_directory + "starry_night.jpg")
+content_img = image_loader(image_directory + "notredam.jpeg")
+style_img = transforms.functional.resize(style_img, size=[imsize,imsize])
 content_img = transforms.functional.resize(content_img, size=[imsize,imsize])
 
 
@@ -108,7 +109,7 @@ class StyleLoss(nn.Module):
         return input
 
 # Importing the VGG 19 model like in the paper (heimagesre we set it to evaluation mode)
-cnn = models.vgg19(pretrained=True).features.to(device).eval()
+cnn = models.resnet34(pretrained=True).to(device).eval()
 
 # VGG network are normalized with special values for the mean and std
 cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406]).to(device)
@@ -131,8 +132,8 @@ class Normalization(nn.Module):
 # Here we insert the loss layer at the right spot
 
 # desired depth layers to compute style/content losses :
-content_layers_default = ['conv_4']
-style_layers_default = ['conv_1', 'conv_2', 'conv_3', 'conv_4', 'conv_5']
+content_layers_default = ['cnn.layer1']
+style_layers_default =['cnn.layer1', 'cnn.layer2', 'cnn.layer3', 'cnn.layer4']
 
 def get_style_model_and_losses(cnn, normalization_mean, normalization_std,
                                style_img, content_img,
@@ -154,6 +155,7 @@ def get_style_model_and_losses(cnn, normalization_mean, normalization_std,
 
     i = 0  # increment every time we see a conv
     for layer in cnn.children():
+        print("we're in!")
         if isinstance(layer, nn.Conv2d):
             i += 1
             name = 'conv_{}'.format(i)
@@ -225,7 +227,7 @@ def run_style_transfer(cnn, normalization_mean, normalization_std,
     while run[0] <= num_steps:
 
         def closure():
-            # correct the values of updated input image
+            # correct the values transforms.functional.resize(content_img, size=[imsize])of updated input image
             input_img.data.clamp_(0, 1)
 
             optimizer.zero_grad()
