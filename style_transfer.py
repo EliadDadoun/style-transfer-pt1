@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -36,7 +37,9 @@ def image_loader(image_name):
 # Loading of images
 image_directory = "data_pic1/"
 style_img = image_loader(image_directory + "picasso.jpg")
-content_img = image_loader(image_directory + "dancing.jpg")
+content_img = image_loader(image_directory + "starry_night.jpg")
+content_img = transforms.functional.resize(content_img, size=[imsize,imsize])
+
 
 assert style_img.size() == content_img.size(), "we need to import style and content images of the same size"
 
